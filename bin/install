@@ -17,19 +17,18 @@ install_tool() {
   local version=$2
   local install_path=$3
   local tmp_download_dir=$4
-  local binary_name=$5
 
   local platform
   local bin_install_path="$install_path/bin"
-  local binary_path="$bin_install_path/${binary_name}"
+  local binary_path="$bin_install_path/github-markdown-toc"
   local download_url
   local download_path
 
   platform=$(get_platform)
-  download_url=$(get_download_url "$version" "$platform" "$binary_name")
-  download_path="$tmp_download_dir/"$(get_filename "$version" "$platform" "$binary_name")
+  download_url=$(get_download_url "$version" "$platform" "gh-md-toc")
+  download_path="$tmp_download_dir/"$(get_filename "$version" "$platform" "gh-md-toc")
 
-  echo "Downloading [${binary_name}] from ${download_url} to ${download_path}"
+  echo "Downloading [gh-md-toc] from ${download_url} to ${download_path}"
   curl -sSL -o "$download_path" "$download_url"
   tar xf "$download_path" -C "$(dirname "$download_path")/"
 
@@ -40,7 +39,7 @@ install_tool() {
   rm -f "$binary_path" 2>/dev/null || true
 
   echo "Copying binary"
-  cp "$(get_binary_path_in_archive "${tmp_download_dir}" "${binary_name}" "${version}" "${platform}")" "${binary_path}"
+  cp "$(get_binary_path_in_archive "${tmp_download_dir}" "gh-md-toc" "${version}" "${platform}")" "${binary_path}"
   chmod +x "${binary_path}"
 }
 
@@ -50,7 +49,7 @@ get_binary_path_in_archive() {
   local version=$3
   local platform=$4
 
-  echo "${archive_dir}/${binary_name}"
+  echo "${archive_dir}/gh-md-toc"
 }
 
 get_platform() {
@@ -62,7 +61,7 @@ get_filename() {
   local platform="$2"
   local binary_name="$3"
 
-  echo "${binary_name}.${platform}.tgz"
+  echo "gh-md-toc.${platform}.tgz"
 }
 
 # https://github.com/ekalinin/github-markdown-toc.go/releases/download/1.0.0/gh-md-toc.darwin.amd64.tgz
@@ -72,11 +71,11 @@ get_download_url() {
   local platform="$2"
   local binary_name="$3"
   local filename
-  filename="$(get_filename "$version" "$platform" "$binary_name")"
+  filename="$(get_filename "$version" "$platform" "gh-md-toc")"
 
   echo "https://github.com/${github_coordinates}/releases/download/${version}/${filename}"
 }
 
 tmp_download_dir="$(mktemp -d -t 'asdf_XXXXXXXX')"
 trap 'rm -rf "${tmp_download_dir}"' EXIT
-install_tool "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH" "$tmp_download_dir" gh-md-toc
+install_tool "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH" "$tmp_download_dir"
